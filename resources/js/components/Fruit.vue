@@ -1,6 +1,6 @@
 <template>
     <div>
-        <table class="table">
+        <table class="table" v-if="dataLoaded">
             <thead>
             <tr>
                 <th scope="col">Id</th>
@@ -16,12 +16,13 @@
             </tr>
             </tbody>
         </table>
+        <div v-else>Loading...</div>
     </div>
 </template>
 
 <script>
 import axios from "axios";
-
+import api from "@/api.js";
 export default {
     data() {
         return {
@@ -32,21 +33,19 @@ export default {
                     price: null
                 }
             ],
+            dataLoaded: false
         }
     },
     methods: {
         getFruits() {
-            console.log(localStorage.getItem('access_token'))
-            axios.get('/api/auth/fruit', {
-                headers: {
-                    'authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
+            api.get('/api/auth/fruit')
                 .then(res => {
-                    console.log(res.data.data);
                     this.fruits = res.data.data
+                    this.dataLoaded = true
                 })
-        }
+
+        },
+
     },
     mounted() {
         this.getFruits()

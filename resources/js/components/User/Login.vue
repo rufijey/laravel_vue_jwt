@@ -25,7 +25,10 @@ export default {
         login(){
             axios.post('/api/auth/login', this.user)
                 .then(res=>{
-                    localStorage.setItem('access_token', res.data.access_token)
+                    if(res.status===200){
+                        localStorage.setItem('access_token', res.data.access_token)
+                        this.$router.push('/user/personal')
+                    }
                 })
         }
     }
