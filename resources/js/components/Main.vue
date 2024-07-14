@@ -5,8 +5,14 @@
 </template>
 
 <script>
-export default {
+import InputComponent from "@/components/UI/InputComponent.vue";
 
+export default {
+    components: {InputComponent},
+
+
+    methods:{
+    }
 }
 </script>
 
