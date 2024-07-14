@@ -1,14 +1,15 @@
 <template>
     <div>
         <input-component v-model.trim="user.email" type="email" placeholder="email"/>
-        <input-component type="password" placeholder="password"/>
-        <button-component >Submit</button-component>
+        <input-component v-model.trim="user.password" type="password" placeholder="password"/>
+        <button-component @click="login">Submit</button-component>
     </div>
 </template>
 
 <script>
 import InputComponent from "@/components/UI/InputComponent.vue";
 import ButtonComponent from "@/components/UI/ButtonComponent.vue";
+import axios from "axios";
 
 export default {
     components: {ButtonComponent, InputComponent},
@@ -20,6 +21,14 @@ export default {
             },
         }
     },
+    methods:{
+        login(){
+            axios.post('/api/auth/login', this.user)
+                .then(res=>{
+                    localStorage.setItem('access_token', res.data.access_token)
+                })
+        }
+    }
 }
 </script>
 
