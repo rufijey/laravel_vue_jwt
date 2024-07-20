@@ -10,6 +10,7 @@
 import InputComponent from "@/components/UI/InputComponent.vue";
 import ButtonComponent from "@/components/UI/ButtonComponent.vue";
 import axios from "axios";
+import setTokenRefreshTimeout from "@/jwt/setTokenRefreshTimeout.js";
 
 export default {
     components: {ButtonComponent, InputComponent},
@@ -17,7 +18,8 @@ export default {
         return{
             user:{
                 email:'',
-                password:''
+                password:'',
+                fingerprint:'123'
             },
         }
     },
@@ -27,6 +29,8 @@ export default {
                 .then(res=>{
                     if(res.status===200){
                         localStorage.setItem('access_token', res.data.access_token)
+                        localStorage.setItem('refresh_token', res.data.refresh_token)
+                        this.$store.commit('setIsAuth', true)
                         this.$router.push('/user/personal')
                     }
                 })

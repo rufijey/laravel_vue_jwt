@@ -22,7 +22,7 @@
 
 <script>
 import axios from "axios";
-import api from "@/api.js";
+import api from "../jwt/api.js";
 export default {
     data() {
         return {

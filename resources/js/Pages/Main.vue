@@ -6,10 +6,10 @@
 
 <script>
 import InputComponent from "@/components/UI/InputComponent.vue";
+import ButtonComponent from "@/components/UI/ButtonComponent.vue";
 
 export default {
-    components: {InputComponent},
-
+    components: {ButtonComponent, InputComponent},
 
     methods:{
     }

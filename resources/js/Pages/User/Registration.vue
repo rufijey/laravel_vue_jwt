@@ -29,7 +29,9 @@ export default {
         store(){
             axios.post('/api/user', this.registrationForm)
                 .then(res=>{
+                    console.log(res)
                 })
+            this.$router.push('/user/login')
         }
     }
 }

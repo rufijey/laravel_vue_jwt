@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RefreshToken;
+use App\Services\AuthService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -12,9 +16,11 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public $service;
+    public function __construct(AuthService $service)
     {
         $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
+        $this->service = $service;
     }
 
     /**
@@ -24,15 +30,10 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $credentials = request(['email', 'password']);
-
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        return $this->respondWithToken($token);
+            $credentials = request(['email', 'password']);
+            $fingerprint = request('fingerprint');
+           return $this->service->login($credentials, $fingerprint);
     }
-
     /**
      * Get the authenticated User.
      *
@@ -40,7 +41,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return $this->service->me();
     }
 
     /**
@@ -50,9 +51,8 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        $fingerprint = request('fingerprint');
+        return $this->service->logout($fingerprint);
     }
 
     /**
@@ -62,22 +62,9 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        $refreshToken = request('refresh_token');
+        $fingerprint = request('fingerprint');
+        return $this->service->refresh($refreshToken, $fingerprint);
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
-    }
 }

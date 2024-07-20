@@ -6,7 +6,10 @@ const app = createApp({});
 
 import App from './App.vue';
 import router from "@/router/router.js";
+import store from "@/store/index.js";
 app.component('app', App);
 
-app.use(router)
+app
+    .use(store)
+    .use(router)
     .mount('#app');

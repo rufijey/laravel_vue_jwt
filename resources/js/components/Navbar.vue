@@ -4,7 +4,7 @@
             Main
         </div>
         <div class="links">
-            <div @click="$router.push('/fruits')" class="item">Fruits</div>
+            <div v-show="$store.state.isAuth" @click="$router.push('/fruits')" class="item">Fruits</div>
             <div @click="$router.push('/user/login')" class="item">Login</div>
             <div @click="$router.push('/user/registration')" class="item">Registration</div>
         </div>

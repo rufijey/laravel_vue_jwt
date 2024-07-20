@@ -1,9 +1,10 @@
 import {createRouter, createWebHistory} from "vue-router";
-import Fruit from "@/components/Fruit.vue";
-import Main from "@/components/Main.vue";
-import Login from "@/components/User/Login.vue";
-import Registration from "@/components/User/Registration.vue";
-import Personal from "@/components/User/Personal.vue";
+import Main from "@/Pages/Main.vue";
+import Fruit from "@/Pages/Fruit.vue";
+import Login from "@/Pages/User/Login.vue";
+import Registration from "@/Pages/User/Registration.vue";
+import Personal from "@/Pages/User/Personal.vue";
+
 
 const routes = [
     {
