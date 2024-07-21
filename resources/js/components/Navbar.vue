@@ -4,6 +4,7 @@
             Main
         </div>
         <div class="links">
+            <div v-show="isAdmin" @click="$router.push('/admin')" class="item">Admin</div>
             <button-component class="logout__btn" @click="logout" v-show="$store.state.isAuth">Logout</button-component>
             <div v-show="$store.state.isAuth" @click="$router.push('/fruits')" class="item">Fruits</div>
             <div v-show="!$store.state.isAuth" @click="$router.push('/user/login')" class="item">Login</div>
@@ -19,6 +20,11 @@ import {getFingerprint} from "@/Services/FingerprintService.js";
 
 export default {
     components: {ButtonComponent},
+    data(){
+        return{
+            isAdmin: false
+        }
+    },
     methods:{
         async logout(){
             const fingerprint = await getFingerprint();
@@ -28,9 +34,24 @@ export default {
                     localStorage.clear()
                     this.$store.dispatch('checkAuth')
                 })
-        }
+        },
+        checkAdmin(){
+            if(localStorage.getItem('role')){
+                this.isAdmin = localStorage.getItem('role') === 'admin'
+            }
+            else{
+                this.isAdmin = false
+            }
+        },
 
+    },
+    mounted(){
+        this.checkAdmin()
+    },
+    updated(){
+        this.checkAdmin()
     }
+
 }
 </script>
 

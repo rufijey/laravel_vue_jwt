@@ -32,6 +32,7 @@ export default {
                         localStorage.setItem('access_token', res.data.access_token)
                         const expires_time =Date.now() + res.data.expires_in*1000
                         localStorage.setItem('expires_time', expires_time)
+                        localStorage.setItem('role', res.data.role)
                         this.$store.dispatch("checkAuth")
                         this.$router.push('/user/personal')
                     }

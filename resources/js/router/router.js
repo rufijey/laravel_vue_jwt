@@ -5,12 +5,17 @@ import Login from "@/Pages/User/Login.vue";
 import Registration from "@/Pages/User/Registration.vue";
 import Personal from "@/Pages/User/Personal.vue";
 import store from "@/store/index.js";
+import Admin from "@/Pages/Admin.vue";
 
 
 const routes = [
     {
         path: '/',
         component: Main
+    },
+    {
+        path: '/admin',
+        component: Admin
     },
     {
         path: '/fruits',
@@ -29,9 +34,9 @@ const routes = [
         component: Personal
     },
     {
-        path: '*',
+        path: '/:pathMatch(.*)*',
         component: Main
-    },
+    }
 
 ]
 
@@ -44,7 +49,7 @@ router.beforeEach((to, from, next) => {
     if(!store.state.isAuth && to.path === '/fruits'){
         return next('/user/login')
     }
-    if(store.state.isAuth && (to.path === 'user/login' || to.path === 'user/register')){
+    if(store.state.isAuth && (to.path === '/user/login' || to.path === '/user/register')){
         return next('/user/personal')
     }
     next()
