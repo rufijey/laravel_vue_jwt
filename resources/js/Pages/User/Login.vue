@@ -10,7 +10,7 @@
 import InputComponent from "@/components/UI/InputComponent.vue";
 import ButtonComponent from "@/components/UI/ButtonComponent.vue";
 import axios from "axios";
-import setTokenRefreshTimeout from "@/jwt/setTokenRefreshTimeout.js";
+import {getFingerprint} from "@/Services/FingerprintService.js";
 
 export default {
     components: {ButtonComponent, InputComponent},
@@ -19,18 +19,20 @@ export default {
             user:{
                 email:'',
                 password:'',
-                fingerprint:'123'
+                fingerprint:''
             },
         }
     },
     methods:{
-        login(){
-            axios.post('/api/auth/login', this.user)
-                .then(res=>{
+        async login(){
+            this.user.fingerprint = await getFingerprint();
+            await axios.post('/api/auth/login', this.user)
+                .then(async res=>{
                     if(res.status===200){
                         localStorage.setItem('access_token', res.data.access_token)
-                        localStorage.setItem('refresh_token', res.data.refresh_token)
-                        this.$store.commit('setIsAuth', true)
+                        const expires_time =Date.now() + res.data.expires_in*1000
+                        localStorage.setItem('expires_time', expires_time)
+                        this.$store.dispatch("checkAuth")
                         this.$router.push('/user/personal')
                     }
                 })

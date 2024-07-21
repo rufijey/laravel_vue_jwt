@@ -15,12 +15,12 @@ export default {
 .button{
   padding: 5px 5px;
   background: none;
-  color: cadetblue;
-  border: 2px solid cadetblue;
+  color: deepskyblue;
+  border: 2px solid deepskyblue;
   margin-top: 5px;
 }
 .button:hover{
-  color: blue;
-  border: 2px solid teal;
+  color: skyblue;
+  border: 2px solid skyblue;
 }
 </style>

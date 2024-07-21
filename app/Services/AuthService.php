@@ -2,19 +2,33 @@
 
 namespace App\Services;
 
+use App\Http\Requests\User\StoreRequest;
 use App\Models\RefreshToken;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthService
 {
+    public function register($data){
+        $credentials = ['email' => $data['email'], 'password' => $data['password']];
+        $fingerprint = $data['fingerprint'];
+        $data['password'] = Hash::make($data['password']);
+        User::FirstOrCreate([
+            'email' => $data['email']
+        ], $data);
+        return $this->login($credentials, $fingerprint);
+    }
     public function login($credentials, $fingerprint)
     {
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        $refreshToken = RefreshToken::createToken(auth()->id(), $fingerprint);
-        return $this->respondWithToken($token, $refreshToken);
+        RefreshToken::invalidateToken($fingerprint);
+        $refreshToken = RefreshToken::createToken($fingerprint);
+        $cookie = cookie('refresh_token', $refreshToken, config('jwt.refresh_ttl'), null, null, true, true);
+        return $this->respondWithToken($token, $refreshToken)->withCookie($cookie);
     }
     public function me()
     {
@@ -22,7 +36,7 @@ class AuthService
     }
     public function logout($fingerprint)
     {
-        RefreshToken::invalidateToken(auth()->user()->id, $fingerprint);
+        RefreshToken::invalidateToken($fingerprint);
         auth()->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
@@ -39,11 +53,12 @@ class AuthService
 
         try {
             $token = auth()->refresh();
-            $newRefreshToken = RefreshToken::createToken($storedToken->user_id, $fingerprint);
+            $newRefreshToken = RefreshToken::createToken($fingerprint);
 
             $storedToken->delete();
 
-            return $this->respondWithToken($token, $newRefreshToken);
+            $cookie = cookie('refresh_token', $newRefreshToken, config('jwt.refresh_ttl'), null, null, true, true);
+            return $this->respondWithToken($token, $newRefreshToken)->withCookie($cookie);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not refresh token'], 500);
         }
@@ -53,9 +68,9 @@ class AuthService
     {
         return response()->json([
             'access_token' => $token,
-            'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'role' => auth()->user()->role
         ]);
     }
 }

@@ -22,7 +22,7 @@
 
 <script>
 import axios from "axios";
-import api from "../jwt/api.js";
+import api from "../api.js";
 export default {
     data() {
         return {
@@ -43,7 +43,6 @@ export default {
                     this.fruits = res.data.data
                     this.dataLoaded = true
                 })
-
         },
 
     },

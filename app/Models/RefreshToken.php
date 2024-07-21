@@ -13,8 +13,9 @@ class RefreshToken extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public static function createToken($userId, $fingerprint)
+    public static function createToken($fingerprint)
     {
+        $userId = auth()->user()->id;
         $refreshToken = bin2hex(random_bytes(64));
         $expiresAt = now()->addMinutes(config('jwt.refresh_ttl'));
 
@@ -28,8 +29,9 @@ class RefreshToken extends Model
         return $refreshToken;
     }
 
-    public static function invalidateToken($userId, $fingerprint)
+    public static function invalidateToken($fingerprint)
     {
+        $userId = auth()->user()->id;
         RefreshToken::where('user_id', $userId)
             ->where('fingerprint', $fingerprint)
             ->delete();

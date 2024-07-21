@@ -26,6 +26,7 @@ class StoreRequest extends FormRequest
             'email' => 'required|email|unique:users',
             'password' => 'required',
             'password_confirmation' => 'required|same:password',
+            'fingerprint' => 'required',
         ];
     }
 }

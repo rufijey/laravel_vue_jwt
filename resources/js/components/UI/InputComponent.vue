@@ -22,9 +22,17 @@ export default {
 <style scoped>
 .input{
     background: none;
-    color: cadetblue;
-    border: 2px solid cadetblue;
+    color: deepskyblue;
+    border: 2px solid deepskyblue;
     padding: 5px;
     margin: 5px 0 0 0;
+    outline:none;
 }
+.input:focus {
+    color: skyblue;
+    border: 2px solid fuchsia;
+    padding: 5px;
+    border-radius: 3px;
+}
+
 </style>

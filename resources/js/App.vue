@@ -1,16 +1,18 @@
 <template>
     <navbar/>
-    <div class="app">
+    <div class="app" >
         <router-view></router-view>
     </div>
 </template>
 
 <script>
 import Navbar from "@/components/Navbar.vue";
-import refreshTokenIfExist from "@/jwt/refreshTokenIfExist.js";
 
 export default {
     components: {Navbar},
+    mounted() {
+        this.$store.dispatch("checkAuth")
+    },
 }
 </script>
 

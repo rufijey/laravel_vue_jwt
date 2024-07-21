@@ -12,6 +12,7 @@
 import InputComponent from "@/components/UI/InputComponent.vue";
 import ButtonComponent from "@/components/UI/ButtonComponent.vue";
 import {Axios} from "axios";
+import {getFingerprint} from "@/Services/FingerprintService.js";
 
 export default {
     components: {ButtonComponent, InputComponent},
@@ -22,16 +23,23 @@ export default {
                 email:'',
                 password:'',
                 password_confirmation: '',
+                fingerprint: ''
             },
         }
     },
     methods:{
-        store(){
-            axios.post('/api/user', this.registrationForm)
+        async store(){
+            this.registrationForm.fingerprint = await getFingerprint();
+            axios.post('/api/auth/register', this.registrationForm)
                 .then(res=>{
-                    console.log(res)
+                    if(res.status===200){
+                        localStorage.setItem('access_token', res.data.access_token)
+                        const expires_time =Date.now() + res.data.expires_in*1000
+                        localStorage.setItem('expires_time', expires_time)
+                        this.$store.dispatch("checkAuth")
+                        this.$router.push('/user/personal')
+                    }
                 })
-            this.$router.push('/user/login')
         }
     }
 }
